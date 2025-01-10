@@ -1,0 +1,22 @@
+name: lung_cancer_detection
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9.18
+  - black
+  - flake8
+  - isort
+  - pip
+  - typer
+  - loguru
+  - tqdm
+  - ipython
+  - jupyterlab
+  - matplotlib
+  - notebook
+  - numpy
+  - pandas
+  - scikit-learn
+  - pip:
+    - python-dotenv
+    - -e .
