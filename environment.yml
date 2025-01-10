@@ -1,5 +1,6 @@
 name: lung_cancer_detection
 channels:
+  - defaults
   - conda-forge
 dependencies:
   - python=3.9.18
@@ -12,11 +13,23 @@ dependencies:
   - tqdm
   - ipython
   - jupyterlab
-  - matplotlib
   - notebook
+  - matplotlib
   - numpy
   - pandas
+  - seaborn
   - scikit-learn
+  - tensorflow
+  - keras
+  - datasets
+  - transformers
+  - evaluate
+  - pillow
+  - torch
+  - torchvision
+  - pytorch-cuda=11.7  # For GPU acceleration, remove if only using CPU (will make running this very slow)
   - pip:
-    - python-dotenv
-    - -e .
+      - python-dotenv
+      - -e .
+      - kaggle
+      - kagglehub
