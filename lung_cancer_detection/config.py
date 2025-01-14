@@ -12,11 +12,14 @@ logger.info(f"PROJ_ROOT path is: {PROJ_ROOT}")
 
 DATA_DIR = PROJ_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
-INTERIM_DATA_DIR = DATA_DIR / "interim"
-PROCESSED_DATA_DIR = DATA_DIR / "processed"
-EXTERNAL_DATA_DIR = DATA_DIR / "external"
+UNZIPPED_DATA_DIR = RAW_DATA_DIR / "unzipped"
+METADATA_DIR = DATA_DIR / "metadata"
+REFERENCE_IMAGE_PATH = UNZIPPED_DATA_DIR / "lung_n/lungn1.jpeg"
+
 
 MODELS_DIR = PROJ_ROOT / "models"
+MODEL_CHECKPOINTS_DIR = MODELS_DIR / "model_train_checkpoints"
+
 
 REPORTS_DIR = PROJ_ROOT / "reports"
 FIGURES_DIR = REPORTS_DIR / "figures"

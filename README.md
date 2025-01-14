@@ -9,7 +9,7 @@ Analysis of histopathological images using CNN and Vision Transformers to detect
 ## Project Organization
 
 ```
-├── LICENSE            <- Open-source license if one is chosen
+├── LICENSE            <- MIT
 ├── Makefile           <- Makefile with convenience commands like `make data` or `make train`
 ├── README.md          <- The top-level README for developers using this project.
 ├── data

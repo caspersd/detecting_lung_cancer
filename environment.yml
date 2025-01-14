@@ -1,5 +1,6 @@
 name: lung_cancer_detection
 channels:
+  - pytorch
   - defaults
   - conda-forge
 dependencies:
@@ -25,11 +26,14 @@ dependencies:
   - transformers
   - evaluate
   - pillow
-  - torch
   - torchvision
-  - pytorch-cuda=11.7  # For GPU acceleration, remove if only using CPU (will make running this very slow)
+  - sklearn
+  - spams
+  #- pytorch-cuda=11.7  # For GPU acceleration, remove if only using CPU (will make running this very slow)
   - pip:
       - python-dotenv
       - -e .
       - kaggle
       - kagglehub
+      - torch
+      - staintools

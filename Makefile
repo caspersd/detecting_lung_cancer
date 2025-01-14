@@ -61,6 +61,17 @@ data: requirements
 	$(PYTHON_INTERPRETER) lung_cancer_detection/dataset.py
 
 
+## Exploratory Data Analysis
+.PHONY: eda
+data: requirements
+	$(PYTHON_INTERPRETER) lung_cancer_detection/eda.py
+
+
+## Train Model
+
+## Generate Reports
+
+
 #################################################################################
 # Self Documenting Commands                                                     #
 #################################################################################
