@@ -65,6 +65,16 @@ train_cnn: requirements
 train_vit: requirements
 	$(PYTHON_INTERPRETER) lung_cancer_detection/train_vit.py
 
+#Predict CNN Model:
+.PHONY: predict_cnn
+predict_cnn: requirements
+	$(PYTHON_INTERPRETER) lung_cancer_detection/predict_cnn.py
+#Predict using ViT Model:
+
+.PHONY: predict_vit
+predict_vit: requirements
+	$(PYTHON_INTERPRETER) lung_cancer_detection/predict_vit.py
+
 #################################################################################
 # Self Documenting Commands                                                     #
 #################################################################################
