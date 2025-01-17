@@ -4,10 +4,13 @@ from loguru import logger
 from keras.models import load_model
 import numpy as np
 from lung_cancer_detection.config import METADATA_DIR, MODELS_DIR, PREDICTIONS_DIR
-from lung_cancer_detection.tf_dataset_loader import load_datasets  # Ensure this function is implemented
+from lung_cancer_detection.tf_dataset_loader import (
+    load_datasets,
+)  # Ensure this function is implemented
 import re
 
 app = typer.Typer()
+
 
 @app.command()
 def predict(
@@ -29,7 +32,7 @@ def predict(
     best_model_file = None
     best_accuracy = -1
     accuracy_pattern = re.compile(r"cnn_model_best_accuracy_(\d+\.\d+).keras")
-    
+
     for model_file in model_files:
         match = accuracy_pattern.search(model_file.name)
         if match:

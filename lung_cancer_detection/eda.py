@@ -27,18 +27,17 @@ def main(
 ):
     # ---- Generate Keras Dataset ----
     logger.info("Generating Keras Dataset...")
-    train_dataset, test_dataset, val_dataset = load_datasets(METADATA_DIR, image_size=(224, 224), batch_size=32)
+    train_dataset, test_dataset, val_dataset = load_datasets(
+        METADATA_DIR, image_size=(224, 224), batch_size=32
+    )
     logger.success("Features generation complete.")
-    
-    
 
-    #import full dataset
+    # import full dataset
     metadata_path = METADATA_DIR / "metadata.csv"
     full_dataset = pd.read_csv(metadata_path)
 
     # -------------------------------------------- Generate Pie Chart of Labels --------------------------------------------
-    label_counts = Counter(full_dataset['label'])
-
+    label_counts = Counter(full_dataset["label"])
 
     # Extract labels and their counts
     label_names = list(label_counts.keys())
@@ -49,25 +48,23 @@ def main(
     plt.pie(
         counts,
         labels=label_names,
-        autopct='%1.1f%%',
+        autopct="%1.1f%%",
         startangle=90,
         colors=plt.cm.tab20c.colors,
-        wedgeprops={'alpha': 0.7}
+        wedgeprops={"alpha": 0.7},
     )
     plt.title("Distribution of Labels in Dataset")
     plt_name = FIGURES_DIR / "Label_Distribution_Pie_Plot"
     plt.savefig(plt_name)
 
-
-
     # -------------------------------------------- Plot Image Before Processing --------------------------------------------
     # Function to extract one sample per class
     def extract_class_samples(full_dataset, num_samples=1):
-        class_names = full_dataset['label'].unique()
+        class_names = full_dataset["label"].unique()
         samples = []
 
         for label in class_names:
-            subset = full_dataset[full_dataset['label'] == label].head(num_samples)
+            subset = full_dataset[full_dataset["label"] == label].head(num_samples)
             samples.append(subset)
 
         return pd.concat(samples)
@@ -76,7 +73,7 @@ def main(
     subset = extract_class_samples(full_dataset, num_samples=1)
 
     # Calculate grid size (one row per class, two columns for raw and processed)
-    num_classes = len(subset['label'].unique())
+    num_classes = len(subset["label"].unique())
     grid_rows = num_classes
     grid_cols = 2  # Raw and processed images
 
@@ -84,7 +81,7 @@ def main(
     plt.figure(figsize=(10, 5 * num_classes))
     plt.suptitle("Raw and Processed Images (Resized, Greyscaled)")
 
-    for i, (image_path, label) in enumerate(zip(subset['file_path'], subset['label'])):
+    for i, (image_path, label) in enumerate(zip(subset["file_path"], subset["label"])):
         try:
             # ---- Load raw image ----
             raw_image = tf.io.read_file(image_path)
@@ -111,7 +108,6 @@ def main(
     plt.tight_layout()
     plt_name = FIGURES_DIR / "post_processed_cell_images"
     plt.savefig(plt_name)
-    
 
 
 if __name__ == "__main__":

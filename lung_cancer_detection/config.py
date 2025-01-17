@@ -18,8 +18,6 @@ MODELS_DIR = PROJ_ROOT / "models"
 PREDICTIONS_DIR = MODELS_DIR / "Predictions"
 
 
-
-
 MODEL_CHECKPOINTS_DIR = MODELS_DIR / "model_train_checkpoints"
 
 

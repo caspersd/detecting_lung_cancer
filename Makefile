@@ -55,6 +55,13 @@ create_environment:
 #################################################################################
 
 ## Make Dataset
+
+## Runs the `dataset.py` script to generate or process the dataset required for training or analysis.
+.PHONY: download_data
+download_data: requirements
+	$(PYTHON_INTERPRETER) lung_cancer_detection/download_dataset.py
+
+
 ## Runs the `dataset.py` script to generate or process the dataset required for training or analysis.
 .PHONY: data
 data: requirements
