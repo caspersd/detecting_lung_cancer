@@ -15,9 +15,6 @@ PYTHON_INTERPRETER = python
 .PHONY: requirements
 requirements:
 	conda env update --name $(PROJECT_NAME) --file environment.yml --prune
-	
-
-
 
 ## Delete all compiled Python files
 .PHONY: clean
@@ -37,40 +34,36 @@ lint:
 format:
 	black --config pyproject.toml lung_cancer_detection
 
-
-
-
 ## Set up python interpreter environment
 .PHONY: create_environment
 create_environment:
 	conda env create --name $(PROJECT_NAME) -f environment.yml
 	
 	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
-	
-
-
 
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################
-
 
 ## Make Dataset
 .PHONY: data
 data: requirements
 	$(PYTHON_INTERPRETER) lung_cancer_detection/dataset.py
 
-
 ## Exploratory Data Analysis
 .PHONY: eda
-data: requirements
+eda: requirements
 	$(PYTHON_INTERPRETER) lung_cancer_detection/eda.py
 
+## Train CNN Model
+.PHONY: train_cnn
+train_cnn: requirements
+	$(PYTHON_INTERPRETER) lung_cancer_detection/train_cnn.py
 
-## Train Model
-
-## Generate Reports
-
+## Train ViT Model
+.PHONY: train_vit
+train_vit: requirements
+	$(PYTHON_INTERPRETER) lung_cancer_detection/train_vit.py
 
 #################################################################################
 # Self Documenting Commands                                                     #

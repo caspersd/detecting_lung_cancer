@@ -17,7 +17,7 @@ def preprocess_image(image_path, label, image_size=(224, 224)):
     
     return image, label
 
-def load_datasets(metadata_dir, image_size=(224, 224), batch_size=32):
+def load_datasets(file_path, image_size=(224, 224), batch_size=32):
     """Load train, test, and validation datasets."""
 
     def load_dataset(csv_file):
@@ -31,12 +31,59 @@ def load_datasets(metadata_dir, image_size=(224, 224), batch_size=32):
         dataset = dataset.batch(batch_size).prefetch(buffer_size=tf.data.AUTOTUNE)
         return dataset
 
-    train_csv = metadata_dir / "train.csv"
-    test_csv = metadata_dir / "test.csv"
-    val_csv = metadata_dir / "val.csv"
+    processed_dataset = load_dataset(file_path)
 
-    train_dataset = load_dataset(train_csv)
-    test_dataset = load_dataset(test_csv)
-    val_dataset = load_dataset(val_csv)
+    return processed_dataset
 
-    return train_dataset, test_dataset, val_dataset
+
+from datasets import load_dataset, Image
+from transformers import ViTImageProcessorFast
+from pathlib import Path
+
+def load_hf_datasets(filename):
+    # Load the image processor
+    processor = ViTImageProcessorFast.from_pretrained("google/vit-base-patch16-224")
+
+  
+    # Row-wise preprocessing function
+    def vis_preprocess_image(batch):
+        # Convert each image in the batch to grayscale and then back to RGB
+        processed_images = []
+        for img in batch["file_path"]:
+            if isinstance(img, list):  # If images are nested in a list, get the first item
+                img = img[0]
+            img = img.convert("L").convert("RGB")  # Convert to grayscale
+            processed_images.append(img)
+
+        # Process the entire batch of images with the processor
+        pixel_values = processor(images=processed_images, return_tensors="pt")["pixel_values"]
+        # Combine processed pixel_values with labels
+        processed_batch = {
+            "pixel_values": pixel_values,
+            "labels": batch["label"],
+        }
+
+        return processed_batch
+
+
+    # Function to load and preprocess a dataset split
+    def load_dataset_split(csv_file):
+        # Load the dataset
+        dataset = load_dataset("csv", data_files=str(csv_file))
+
+        # Cast the `file_path` column to Image
+        dataset = dataset.cast_column("file_path", Image())
+
+
+        # Apply row-wise transformations
+        dataset = dataset.with_transform(vis_preprocess_image, )
+        print(f"Dataset: {csv_file}:\n {dataset['train']}")
+        return dataset['train']
+
+
+
+    # Load and preprocess datasets
+    dataset = load_dataset_split(filename)
+
+
+    return dataset

@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 import glob
 from lung_cancer_detection.config import MODEL_CHECKPOINTS_DIR, METADATA_DIR, MODELS_DIR, FIGURES_DIR
 from lung_cancer_detection.tf_dataset_loader import load_datasets  # Ensure this function is implemented
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import numpy as np
 
 app = typer.Typer()
 
@@ -44,13 +47,29 @@ def visualize_training(history):
     plt.savefig(plt_name)
     plt.show()
 
+def plot_confusion_matrix(y_true, y_pred):
+    cm = confusion_matrix(y_true, y_pred)
+    classes = ['aca', 'normal', 'scc']
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=classes, yticklabels=classes)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix for CNN Model')
+    plt_name = FIGURES_DIR / "Conv_NN_Confusion_Matrix.png"
+    plt.savefig(plt_name)
+
 @app.command()
 def main(
     metadata_path: Path = METADATA_DIR,
-    model_checkpoint_path: Path = MODEL_CHECKPOINTS_DIR,
+    model_checkpoint_path: Path = MODEL_CHECKPOINTS_DIR / "CNN",
 ):
     logger.info("Generating Keras Dataset...")
-    train_dataset, test_dataset, val_dataset = load_datasets(metadata_path, image_size=(224, 224), batch_size=32)
+    train_path = metadata_path / "train.csv"
+    test_path = metadata_path / "train.csv"
+    val_path = metadata_path / "train.csv"
+    train_dataset = load_datasets(train_path, image_size=(224, 224), batch_size=32)
+    val_dataset = load_datasets(val_path, image_size=(224, 224), batch_size=32)
+    test_dataset = load_datasets(test_path, image_size=(224, 224), batch_size=32)
     logger.success("Features generation complete.")
 
     # Define input shape for grayscale images
@@ -66,6 +85,7 @@ def main(
         logger.info(f"Found checkpoint: {latest_checkpoint}. Loading model...")
         cnn_model = load_model(latest_checkpoint)
         initial_epoch = int(latest_checkpoint.split("epoch-")[1].split("_")[0])
+        logger.success("Model loaded from checkpoint . . .")
     else:
         logger.info("No checkpoint found. Defining model from scratch.")
         initial_epoch = 0
@@ -95,25 +115,46 @@ def main(
     # Define callbacks
     checkpoint_callback = ModelCheckpoint(
         filepath=checkpoint_path,
-        monitor='val_loss',
+        monitor='val_accuracy',
+        save_best_only=False,
+        save_weights_only=False,
+        mode='max',
+        verbose=1
+    )
+    best_model_path = str(MODELS_DIR / "cnn_model_best_accuracy_{val_accuracy:.4f}.keras")
+
+    best_model_callback = ModelCheckpoint(
+        filepath=best_model_path,
+        monitor="val_accuracy",
         save_best_only=True,
         save_weights_only=False,
-        mode='min',
+        mode='max',
         verbose=1
     )
 
     # Train the model
-    epochs = 1
+    epochs = 5
     history = cnn_model.fit(
         train_dataset,
         validation_data=val_dataset,
         epochs=epochs,
         initial_epoch=initial_epoch,
-        callbacks=[checkpoint_callback]
+        callbacks=[checkpoint_callback, best_model_callback]
     )
+    if initial_epoch < epochs:
+        # Visualize training history
+        visualize_training(history)
+    
+    # Perform predictions
+    y_pred = cnn_model.predict(test_dataset)
 
-    # Visualize training history
-    visualize_training(history)
+    # Get predicted class labels
+    y_pred = np.argmax(y_pred, axis=1)
+    true_labels = np.concatenate([label.numpy() for _, label in test_dataset])
+
+    plot_confusion_matrix(true_labels,y_pred)
+    
+    
 
 
 if __name__ == "__main__":

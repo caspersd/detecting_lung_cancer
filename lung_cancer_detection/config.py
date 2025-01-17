@@ -14,10 +14,12 @@ DATA_DIR = PROJ_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
 UNZIPPED_DATA_DIR = RAW_DATA_DIR / "unzipped"
 METADATA_DIR = DATA_DIR / "metadata"
-REFERENCE_IMAGE_PATH = UNZIPPED_DATA_DIR / "lung_n/lungn1.jpeg"
-
-
 MODELS_DIR = PROJ_ROOT / "models"
+PREDICTIONS_DIR = MODELS_DIR / "Predictions"
+
+
+
+
 MODEL_CHECKPOINTS_DIR = MODELS_DIR / "model_train_checkpoints"
 
 
