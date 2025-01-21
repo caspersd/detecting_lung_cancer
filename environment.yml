@@ -1,8 +1,9 @@
 name: lung_cancer_detection
 channels:
   - conda-forge
+  - pytorch
 dependencies:
-  - python=3.9.18
+  - python=3.9
   - black
   - flake8
   - isort
@@ -11,12 +12,18 @@ dependencies:
   - loguru
   - tqdm
   - ipython
-  - jupyterlab
   - matplotlib
-  - notebook
   - numpy
   - pandas
+  - seaborn
   - scikit-learn
+  - tensorflow 
+  - keras
+  - datasets
+  - transformers
+  - evaluate
+  - pillow
+
   - pip:
-    - python-dotenv
-    - -e .
+      - python-dotenv
+      - kaggle

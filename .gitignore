@@ -1,5 +1,7 @@
 # Data
 /data/
+/models/model_train_checkpoints/
+/models/*.keras
 
 # Mac OS-specific storage files
 .DS_Store
